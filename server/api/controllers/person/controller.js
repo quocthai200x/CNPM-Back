@@ -51,11 +51,11 @@ export class PersonService {
     }
 
     async updatePerson(req,res){
-        const {name, dob, home ,id,work_at, cmnd,gender } = req.query;
+        const {name, dob, id, work_at, cmnd,gender } = req.query;
         try{
             const personUpdated = await personModel.findByIdAndUpdate(id,{$set:
                 {
-                    name,dob,home,work_at,cmnd,gender
+                    name,dob,work_at,cmnd,gender
                 }
             },{
                 new:true,
