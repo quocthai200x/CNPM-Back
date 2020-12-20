@@ -11,6 +11,7 @@ const awardSchema = new Schema({
         awardFor:{type: String,required: true},
         name: {type: String, required: true, default: 'default gift'},
         price: {type: Number, required: true, default: 0},
+        quantity: {type: Number, default :1}
     }],
     from: {type: Date, required: true},
     to: {type: Date, required : true},

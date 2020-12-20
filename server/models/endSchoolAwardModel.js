@@ -9,6 +9,7 @@ const endSchoolAwardSchema = new Schema({
     home: { type: mongoose.Types.ObjectId, ref: "homes", required: true},
     isAwarded : {type: Boolean, required: true, default: false},
     gifts: [{
+        awardFor: {type: String, default:""},
         name: {type: String,  default: 'default gift'},
         price: {type: Number, default: 0},
         quantity: {type: Number,  default: 1},  
