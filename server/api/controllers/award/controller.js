@@ -1,4 +1,5 @@
 import awardModel from "../../../models/awardModel"
+
 import speicalEventAwardModel from "../../../models/specialEventAwardModel"
 
 import { codeSucess, codeFail, codeFailCreated, codeCreateExisted, codeUpdated, codeParameterInvalid} from "../../../constants/codeRes"
@@ -38,7 +39,7 @@ export class AwardService {
             }
             
             if(is_allAwardDone){
-                const updated = await feeModel.findByIdAndUpdate(id,{
+                const updated = await awardModel.findByIdAndUpdate(award_id,{
                     isDone: true,
                 },{
                     new:true,
@@ -102,23 +103,7 @@ export class AwardService {
     async addGift(req,res){
         const {id, gifts, type} = req.body;
         try{
-            if(type === 1){
-                const updated = await speicalEventAwardModel.findByIdAndUpdate(id,{
-                    $set:{
-                        gifts,
-                    }
-                },{
-                    new: true,lean:true
-                })
-                if(updated){
-                    return res.json({
-                        ...codeSucess,
-                        data: updated,
-                    })
-                }
-                return res.json(codeFail)
-            }
-            else if(type === 2){
+                if(type === 2){
                 const updated = await endSchoolAwardModel.findByIdAndUpdate(id,{
                     $set:{
                        gifts
@@ -146,7 +131,7 @@ export class AwardService {
     async submitAward(req,res){
         const { id, type } = req.body
         try{
-            if(type === 1){
+            if(type == 1){
                 const updated = await speicalEventAwardModel.findByIdAndUpdate(id,{
                     $set:{
                         isAwarded: true,
@@ -162,7 +147,7 @@ export class AwardService {
                 }
                 return res.json(codeFail)
             }
-            else if(type === 2){
+            else if(type == 2){
                 const updated = await endSchoolAwardModel.findByIdAndUpdate(id,{
                     $set:{
                         isAwarded: true,
@@ -215,7 +200,19 @@ export class AwardService {
     }
 
     async getAll(req,res){
+        const {award_id} = req.query;
         try{
+        if(award_id){
+            // console.log(award_id)
+            const awardFound = await awardModel.findById(award_id);
+            if(awardFound){
+                return res.json({
+                    ...codeSucess,
+                    data: awardFound,
+                })
+            }
+            return res.json(codeFail);
+        }
             const awardsFound = await awardModel.find();
             if(awardsFound){
                 return res.json({
@@ -252,15 +249,18 @@ export class AwardService {
                             $lt: Date.now(),
                         }
                     }).lean();
-                    
                     listPerson.forEach(async (person) =>{
                         let specialCreated = await speicalEventAwardModel.create({
                             award: awardCreated._id,
                             person: person._id,
                             home: person.home,
+                            gifts,
                         })
                     })
-                    return res.json(codeSucess)
+                    return res.json({
+                        ...codeSucess,
+                        data: awardCreated
+                    })
                 }
                 else if(type === 2){
                     const listPerson = await personModel.find({
@@ -277,7 +277,10 @@ export class AwardService {
                             home: person.home,
                         })
                     })
-                    return res.json(codeSucess)
+                    return res.json({
+                        ...codeSucess,
+                        data: awardCreated,
+                    })
                 }
                 const deleteAward = await speicalEventAwardModel.findByIdAndDelete(awardCreated._id);
                 return res.json(codeFail)

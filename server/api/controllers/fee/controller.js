@@ -14,7 +14,7 @@ export class FeeService {
         let list_bill_not_done = [];
         let is_allBillDone = true; 
         try{
-            listFound = await feeBillModel.find({fee: fee_id})
+            listFound = await feeBillModel.find({fee: fee_id}).populate('home');
             if(listFound){
                 listFound.forEach(e=>{
                     if(!e.isSubmitted){
@@ -23,14 +23,17 @@ export class FeeService {
                     }
                 })
                 if(is_allBillDone){
-                    const updated = await feeModel.findByIdAndUpdate(id,{
+                    const updated = await feeModel.findByIdAndUpdate((fee_id),{
                         isDone: true,
                     },{
                         new:true,
                         lean:true,
                     })
                     if(updated){
-                        return res.json(codeSucess);
+                        return res.json({...
+                            codeSucess,
+                            data: updated
+                        });
                     }
                     return res.json({...
                         codeFail,
@@ -47,7 +50,7 @@ export class FeeService {
         } catch (e) {
             res.json({
                 ...codeFail,
-                error: e,
+                error: e.message,
             })
         }
     }
@@ -60,7 +63,7 @@ export class FeeService {
             }, {
                 new: true,
                 lean: true,
-            })
+            }).populate('home');
             if (feeUpdated) {
                 return res.json({
                     ...codeSucess,
@@ -121,6 +124,9 @@ export class FeeService {
 
     async getAllBill(req, res) {
         const { home_id, fee_id } = req.query;
+        if(home_id && fee_id){
+            return res.json(codeFail);
+        }
         try {
             if (home_id) {
                 const listFound = await feeBillModel.find({ home: home_id })
@@ -164,20 +170,32 @@ export class FeeService {
         }
     }
     async getAll(req, res) {
+        const {fee_id} = req.query;
         try {
+            if(fee_id){
+                const feeFound = await feeModel.findById(fee_id);
+                if(feeFound){                    
+                    return res.json({
+                        ...codeSucess,
+                        data: feeFound
+                    })
+                }
+                return res.json(codeFail)
+            }
             const listFound = await feeModel.find();
             if (listFound) {
-                res.json({
+                return res.json({
                     ...codeSucess,
                     data: {
                         listFee: listFound,
                     }
                 })
             }
+            res.json(codeFail);
         } catch (e) {
             res.json({
                 ...codeFail,
-                error: e,
+                error: e.message,
             })
         }
     }
@@ -222,7 +240,7 @@ export class FeeService {
         } catch (e) {
             res.json({
                 ...codeFail,
-                error: e,
+                error: e.message,
             })
         }
     }
