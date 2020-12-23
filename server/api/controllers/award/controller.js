@@ -85,6 +85,16 @@ export class AwardService {
                         return element.home._id == home_id
                     })
                 }
+                listFound.sort(function compare(a, b) {
+                    if (a.home._id< b.home._id){
+                      return -1;
+                    }
+                    if (a.home._id>b.home._id){
+                      return 1;
+                    }
+                    // a bằng b
+                    return 0;
+                  })
                 return res.json({
                     ...codeSucess,
                     data: listFound
@@ -154,7 +164,7 @@ export class AwardService {
                     }
                 },{
                     new: true,lean:true
-                })
+                }).populate(['home','person'])
                 if(updated){
                     return res.json({
                         ...codeSucess,
@@ -242,7 +252,7 @@ export class AwardService {
                 name, type, gifts,from, to,description
             })
             if(awardCreated){
-                if(type === 1){
+                if(type == 1){
                     const listPerson = await personModel.find({
                         dob: {
                             $gt: string_18yearsFromNow,
@@ -262,7 +272,7 @@ export class AwardService {
                         data: awardCreated
                     })
                 }
-                else if(type === 2){
+                else if(type == 2){
                     const listPerson = await personModel.find({
                         dob: {
                             $gt: string_18yearsFromNow,
