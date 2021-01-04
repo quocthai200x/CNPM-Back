@@ -1,3 +1,26 @@
+#### Hướng dẫn cài đặt:
++ Tải project về máy (yêu cầu máy có sẵn nodejs)
++ Cài đặt các dependencies thông qua lệnh: **npm install** (lưu ý: cần chỉ đường dẫn về project)
++ Để chạy, lệnh: **npm run dev** (lệnh này sẽ chạy trên môi trường dev)
++ Nếu project bị app crushed, lỗi thì khả năng như sau:
+    - Lỗi trùng cổng, lên gg search **how to kill process port** rồi vào stackoverflow
+    - Lỗi liên quan đến cài đặt môi trường, nếu kiểm tra trong project mà thiếu file **.env** thì project này sẽ không hoạt động được
+
+
+#### File .env như sau:
+APP_ID=my_PRJ
+PORT=6969
+LOG_LEVEL=debug
+REQUEST_LIMIT=100kb
+SESSION_SECRET=mySecret
+OPENAPI_SPEC=/api/spec
+OPENAPI_ENABLE_RESPONSE_VALIDATION=false
+DB_USER=quocthai2000x
+DB_PASSWORD=Ta0kh0ngn0i
+DB_NAME=linux
+
+
+
 # my_PRJ
 
 My cool app
@@ -44,6 +67,10 @@ or debug it
 ```shell
 npm run dev:debug
 ```
+
+
+
+
 
 #### Run in *production* mode:
 
