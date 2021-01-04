@@ -7,7 +7,7 @@ export class AuthService {
         try{
             const homeFound = await homeModel.findOne({username, password});
             if(homeFound){
-                return res.json(homeFound);
+                return res.json({...codeSucess,data:homeFound});
             }
             res.json(codeFail);
         }catch(e){
